@@ -109,3 +109,97 @@
             (add-branch (add-vertex current-tree vertex) edge)))))))
 
 #_(minimum-spanning-tree-by-prim graph)
+
+;; ---------------
+;; BST
+;; ---------------
+(defrecord Node [element left right])
+
+(defn <min>
+  "Gives smallest element from the tree"
+  [{:keys [element left]}]
+  (if left
+    (recur left)
+    element))
+
+(defn <max>
+  "Returns largest element from the tree"
+  [{:keys [element right]}]
+  (if right
+    (recur right)
+    element))
+
+(defn <contains?>
+  "Search for an element in the tree"
+  [{:keys [element left right] :as tree} value]
+  (cond
+   (nil? tree) false
+   (< value element) (recur left value)
+   (> value element) (recur right value)
+   :else true))
+
+(defn <count>
+  "Counts nodes of the tree"
+  [{:keys [left right] :as tree}]
+  (if tree
+    (+ 1 (<count> left) (<count> right))
+    0))
+
+(defn height
+  "Return height of the tree"
+  ([tree] (height tree 0))
+  ([tree no-of-nodes]
+   (if tree
+     (max (height (:left tree) (inc no-of-nodes))
+          (height (:right tree) (inc no-of-nodes)))
+     no-of-nodes)))
+
+(defn insert
+  "Inserts node in the tree"
+  [{:keys [element left right] :as tree} value]
+  (cond
+   (nil? tree) (Node. value nil nil)
+   (< value element) (Node. element (insert left value) right)
+   (> value element) (Node. element left (insert right value))
+   :else tree))
+
+(defn remove
+  "Removes node from a tree"
+  [{:keys [element left right] :as tree} value]
+  (cond
+   (nil? tree) nil
+   (< value element) (Node. element (remove left value) right)
+   (> value element) (Node. element left (remove right value))
+   (nil? left) right
+   (nil? right) left
+   :else (let [min-value (<min> right)]
+           (Node. min-value left (remove right min-value)))))
+
+(defn bst?
+  "Returns true if given tree is BST, within given range"
+  ([tree] (bst? tree Integer/MIN_VALUE Integer/MAX_VALUE))
+  ([{:keys [element left right] :as tree} minimum maximum]
+   (cond
+     (nil? tree) true
+     (or (< element minimum) (> element maximum)) false
+     :else (and (bst? left minimum (dec element))
+                (bst? right (inc element) maximum)))))
+
+(def to-tree #(reduce insert nil %))
+
+(defn to-list
+  "Returns list in inorder fashion"
+  [{:keys [element left right] :as tree}]
+  (when tree
+    `(~@(to-list left) ~element ~@(to-list right))))
+
+(def tree (to-tree '(5 8 2 3 4 1)))
+
+tree
+(bst? tree) ; true
+(<count> tree) ; 6
+(height tree) ; 4
+(<max> tree) ; 8
+(<min> tree) ; 1
+(to-list (remove tree 3)) ; (1 2 4 5 8)
+(<contains?> tree 2) ; true
