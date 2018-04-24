@@ -196,6 +196,13 @@
 (def tree (to-tree '(5 8 2 3 4 1)))
 
 tree
+;;        5
+;;       / \
+;;      2   8
+;;     / \
+;;    1   3
+;;         \
+;;          4
 (bst? tree) ; true
 (<count> tree) ; 6
 (height tree) ; 4
