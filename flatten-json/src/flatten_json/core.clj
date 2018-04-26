@@ -32,6 +32,6 @@
          (assoc %1 fld-key %3))) {} mp))
 
 
-(flatten-json nil "_" (make-map (if (coll? data)
+(flatten-json nil "_" (make-map (if (vector? data)
                                   (zipmap (range) data)
                                   data)))
