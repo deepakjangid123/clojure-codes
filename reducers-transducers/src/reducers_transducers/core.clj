@@ -27,7 +27,7 @@
 #_(time (do (lazy-test  (range 1 50000000)) nil)) ;; 9954.57105 msecs
 ;; ---------------------------------------
 
-(def data (into [] (take 10000000 (repeatedly #(rand-int 1000)))))
+(def data (into [] (take 100000000 (repeatedly #(rand-int 1000)))))
 
 
 ;; ----Reducer definition and working----
@@ -74,9 +74,9 @@
       ([counts x] (merge-with + counts {x 1})))
     coll))
 
-#_(time (do (frequencies data) nil)) ;; 6164.858998 msecs
+(time (do (frequencies data) nil)) ;; 6164.858998 msecs
 #_(time (do (pfrequencies data) nil)) ;; 5333.760102 msecs
-#_(time (do (p2frequencies data) nil)) ;; 4920.134055 msecs
+(time (do (p2frequencies data) nil)) ;; 4920.134055 msecs
 ;; ---------------------------------------
 
 ;; ----Basic Funda----
@@ -113,7 +113,7 @@ xf
      (take 5))
 
 #_((comp str +) 8 8 8)
-
+(eduction xf (range))
 (transduce xf + (range)) ;; => 30
 (transduce xf + 100 (range)) ;; => 130
 
@@ -141,7 +141,6 @@ iter
   (comp
     (map inc)
     (filter odd?)))
-
 (def xf (map #(get % "a" 0)))
 xf
 
@@ -170,3 +169,11 @@ xf
              (rf result input))))))))
 
 (transduce (distinct-2) conj [1 2 1 3 4 3])
+
+(time (r/fold + (r/map inc (range 1 1000))))
+(time (reduce + (map inc (range 1 1000))))
+
+(time (reduce + (map inc (range 1 100000000))))
+(time (r/fold + (r/map inc (range 1 100000000))))
+
+(time (reduce + (filter odd? (map inc (range 100000000)))))
