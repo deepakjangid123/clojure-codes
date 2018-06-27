@@ -94,7 +94,8 @@
 
 (prn (str "Sending a message to topic 'tset', on which actions will be performed"
           " and if conditions are met then sent to output-topic which is 'test' in this case..."))
-;; You can see the message by starting a consumer on 'test' topic
+;; You will not see this message on 'test' topic,
+;; because it will get filtered out based on the transformation above.
 (.send producer (ProducerRecord. "tset" "baz" "quux"))
 
 (prn "Closing kafka-producer...")
