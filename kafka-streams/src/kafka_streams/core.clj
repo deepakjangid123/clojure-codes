@@ -88,11 +88,13 @@
 (prn (str "Sending a message to topic 'tset', on which actions will be performed"
           " and if conditions are met then sent to output-topic which is 'test' in this case..."))
 ;; Transformation will happen based on the transform function `(transduce-kstream input xform)`
+;; You can see the message by starting a consumer on 'test' topic
 (.send producer (ProducerRecord. "tset" "foo" "AB")) ;; tset = topic-name
 
 
 (prn (str "Sending a message to topic 'tset', on which actions will be performed"
           " and if conditions are met then sent to output-topic which is 'test' in this case..."))
+;; You can see the message by starting a consumer on 'test' topic
 (.send producer (ProducerRecord. "tset" "baz" "quux"))
 
 (prn "Closing kafka-producer...")
